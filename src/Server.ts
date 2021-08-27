@@ -3,19 +3,19 @@ import http from 'http';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import path from 'path';
-import { Server as SocketIo } from 'socket.io';
+import {Server as SocketIo} from 'socket.io';
 import StatusCodes from 'http-status-codes';
-import express, { NextFunction, Request, Response } from 'express';
+import express, {NextFunction, Request, Response} from 'express';
+import cors from "cors";
 
 import 'express-async-errors';
 
 import BaseRouter from './routes';
 import logger from '@shared/Logger';
-import { cookieProps } from '@shared/constants';
+import {cookieProps} from '@shared/constants';
 
 const app = express();
-const { BAD_REQUEST } = StatusCodes;
-
+const {BAD_REQUEST} = StatusCodes;
 
 
 /************************************************************************************
@@ -34,6 +34,7 @@ if (process.env.NODE_ENV === 'development') {
 // Security
 if (process.env.NODE_ENV === 'production') {
     app.use(helmet());
+    app.use(cors());
 }
 
 // Add APIs
@@ -47,7 +48,6 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
         error: err.message,
     });
 });
-
 
 
 /************************************************************************************
@@ -85,7 +85,6 @@ app.get('/chat', (req: Request, res: Response) => {
 });
 
 
-
 /************************************************************************************
  *                                   Setup Socket.io
  * Tutorial used for this: https://www.valentinog.com/blog/socket-react/
@@ -97,7 +96,6 @@ const io = new SocketIo(server);
 io.sockets.on('connect', () => {
     return app.set('socketio', io);
 });
-
 
 
 /************************************************************************************
